@@ -3,7 +3,7 @@
 This repository deploys **both** the React + Vite frontend and the Python FastAPI backend (`backend/main.py`) in **one single Vercel project and domain**:
 
 - **Frontend (Vite SPA)** at root (`.`) built with `npm run build` -> `dist/`
-- **Backend (Python FastAPI)** via Vercel Serverless Function entrypoint `/api/index.py` (wrapping `backend/main.py:app`) and root `/requirements.txt` (`-r backend/requirements.txt`)
+- **Backend (Python FastAPI)** via Vercel Serverless Function entrypoint `/api/index.py` (wrapping `backend/main.py:app`) and root `/requirements.txt` (synced directly with `backend/requirements.txt`)
 - **Unified Routing (`vercel.json`)**:
   - `/api` and `/api/(.*)` -> `/api/index.py` (Python FastAPI)
   - All other non-asset routes -> `/index.html` (Vite SPA)

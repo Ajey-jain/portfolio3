@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import { AboutSection } from './components/AboutSection';
-import { AdminDashboardModal } from './components/AdminDashboardModal';
 import { AskAjeyWidget } from './components/AskAjeyWidget';
 import { BlogSection } from './components/BlogSection';
 import { CertificatesSection } from './components/CertificatesSection';
@@ -13,6 +12,10 @@ import { ProjectsSection } from './components/ProjectsSection';
 import { SkillsSection } from './components/SkillsSection';
 import type { BlogPost, Certificate, ProfileSettings, Project } from './types/portfolio';
 import { apiFetch } from './utils/api';
+
+const AdminDashboardModal = lazy(() =>
+  import('./components/AdminDashboardModal').then((m) => ({ default: m.AdminDashboardModal }))
+);
 
 const DEFAULT_PROFILE: ProfileSettings = {
   name: 'Ajey C',
@@ -142,11 +145,15 @@ export default function App() {
 
       <AskAjeyWidget />
 
-      <AdminDashboardModal
-        open={adminOpen}
-        onClose={() => setAdminOpen(false)}
-        onDataChanged={() => void loadPublicData()}
-      />
+      {adminOpen && (
+        <Suspense fallback={null}>
+          <AdminDashboardModal
+            open={adminOpen}
+            onClose={() => setAdminOpen(false)}
+            onDataChanged={() => void loadPublicData()}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

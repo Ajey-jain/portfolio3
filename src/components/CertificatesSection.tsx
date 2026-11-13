@@ -1,11 +1,14 @@
-import { useMemo, useState } from 'react';
+import { Suspense, lazy, useMemo, useState } from 'react';
 import { Download, Eye, FileText, Search } from 'lucide-react';
 import { motion } from 'motion/react';
 import type { Certificate, CertificateCategory } from '../types/portfolio';
 import { apiUrl } from '../utils/api';
 import { filterCertificates, getRelevantCertificateCategories } from '../utils/portfolioLogic';
-import { CertificateModal } from './CertificateModal';
 import { PdfCanvasPreview } from './PdfCanvasPreview';
+
+const CertificateModal = lazy(() =>
+  import('./CertificateModal').then((m) => ({ default: m.CertificateModal }))
+);
 
 interface CertificatesSectionProps {
   certificates: Certificate[];
@@ -224,10 +227,14 @@ export function CertificatesSection({ certificates, onCertificateView }: Certifi
         )}
       </div>
 
-      <CertificateModal
-        certificate={activeCertificate}
-        onClose={() => setActiveCertificate(null)}
-      />
+      {activeCertificate && (
+        <Suspense fallback={null}>
+          <CertificateModal
+            certificate={activeCertificate}
+            onClose={() => setActiveCertificate(null)}
+          />
+        </Suspense>
+      )}
     </section>
   );
 }

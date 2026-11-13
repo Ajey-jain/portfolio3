@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import * as pdfjsLib from 'pdfjs-dist';
-import pdfWorkerUrl from 'pdfjs-dist/build/pdf.worker.mjs?url';
+import type { PDFDocumentLoadingTask } from 'pdfjs-dist';
 import { FileText } from 'lucide-react';
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
 
 interface PdfCanvasPreviewProps {
   url: string;
@@ -28,11 +25,19 @@ export function PdfCanvasPreview({
 
   useEffect(() => {
     let cancelled = false;
-    let loadingTask: pdfjsLib.PDFDocumentLoadingTask | null = null;
+    let loadingTask: PDFDocumentLoadingTask | null = null;
 
     async function renderPdf() {
       setStatus('loading');
       try {
+        const [pdfjsLib, workerMod] = await Promise.all([
+          import('pdfjs-dist'),
+          import('pdfjs-dist/build/pdf.worker.mjs?url'),
+        ]);
+        if (cancelled) return;
+        if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+          pdfjsLib.GlobalWorkerOptions.workerSrc = workerMod.default;
+        }
         loadingTask = pdfjsLib.getDocument({ url });
         const pdf = await loadingTask.promise;
         if (cancelled) return;
