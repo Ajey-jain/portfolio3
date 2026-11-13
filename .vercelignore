@@ -1,0 +1,15 @@
+node_modules/
+data/
+dist/
+build/
+coverage/
+.playwright-cli/
+.aistudio/
+backend/.venv/
+backend/portfolio.db
+**/__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+!backend/.env.example
